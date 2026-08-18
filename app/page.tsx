@@ -3,11 +3,12 @@
 import { useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { AlertCircle, Camera, Loader2, RotateCcw, Sparkles } from "lucide-react";
+import { AlertCircle, Camera, Loader2, RotateCcw } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 import { cn } from "@/lib/utils";
 
 type Status = "idle" | "loading" | "done" | "error";
@@ -59,7 +60,7 @@ export default function Home() {
   const isBusy = status === "loading";
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background">
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 overflow-hidden"
@@ -67,15 +68,10 @@ export default function Home() {
         <div className="absolute left-1/2 top-[-12rem] h-[28rem] w-[50rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       </div>
 
-      <main className="relative mx-auto flex min-h-screen max-w-2xl flex-col items-center gap-8 px-6 py-16 sm:py-24">
+      <Navbar />
+
+      <main className="relative mx-auto flex w-full max-w-2xl flex-1 flex-col items-center gap-8 px-6 py-16 sm:py-20">
         <div className="flex flex-col items-center gap-3 text-center">
-          <Badge
-            variant="secondary"
-            className="gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-          >
-            <Sparkles className="h-3 w-3" />
-            Powered by RocketRide Cloud
-          </Badge>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
             🥕 PantryPilot
           </h1>
@@ -176,20 +172,9 @@ export default function Home() {
             </Button>
           </div>
         )}
-
-        <p className="mt-auto pt-8 text-center text-xs text-muted-foreground">
-          Built on{" "}
-          <a
-            href="https://rocketride.ai"
-            className="underline underline-offset-2 hover:text-foreground"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            RocketRide
-          </a>{" "}
-          — vision + agent pipeline running on RocketRide Cloud.
-        </p>
       </main>
+
+      <Footer />
     </div>
   );
 }
