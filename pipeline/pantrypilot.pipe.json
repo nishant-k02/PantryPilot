@@ -1,0 +1,72 @@
+{
+  "name": "pantrypilot",
+  "description": "Looks at a photo of a fridge or pantry, identifies the ingredients, and suggests real recipes plus a shopping list for what's missing.",
+  "version": 1,
+  "source": "source_1",
+  "components": [
+    {
+      "id": "source_1",
+      "provider": "webhook",
+      "name": "Photo intake",
+      "config": {}
+    },
+    {
+      "id": "vision_1",
+      "provider": "image_vision_gemini",
+      "name": "Ingredient spotter",
+      "config": {
+        "profile": "gemini-3_1-pro-preview",
+        "gemini-3_1-pro-preview": {
+          "apikey": "${GEMINI_API_KEY}"
+        },
+        "vision": {
+          "systemPrompt": "You are a meticulous kitchen-inventory assistant. You only report what is visibly present in the photo.",
+          "prompt": "List every distinct food ingredient visible in this photo of a fridge or pantry, one per line. Be specific (e.g. 'red bell pepper', not 'vegetable'). Note approximate quantity if obvious. Ignore packaging text and brand names unless they identify the food itself. If the photo doesn't show food, say so plainly."
+        }
+      },
+      "input": [
+        { "lane": "image", "from": "source_1" }
+      ]
+    },
+    {
+      "id": "prompt_1",
+      "provider": "prompt",
+      "name": "Recipe brief",
+      "config": {
+        "instructions": [
+          "You are a practical home-cooking assistant. Using ONLY the ingredients listed in the Context section below (plus common pantry staples like oil, salt, pepper, butter, and water, which you may assume are available), suggest exactly 3 real recipes the user could realistically cook tonight. For each recipe, give: a name, a one-sentence description, the ingredients it uses from the list, and simple numbered steps. After the recipes, add a 'Shopping List' section with 3-5 common ingredients NOT seen in the photo that would unlock noticeably better meals. Respond in clean, well-structured Markdown with headings for each recipe."
+        ]
+      },
+      "input": [
+        { "lane": "text", "from": "vision_1" },
+        { "lane": "questions", "from": "source_1" }
+      ]
+    },
+    {
+      "id": "agent_1",
+      "provider": "llm_anthropic",
+      "name": "Recipe writer",
+      "config": {
+        "profile": "claude-sonnet-4-6",
+        "claude-sonnet-4-6": {
+          "apikey": "${ANTHROPIC_API_KEY}",
+          "modelSource": "manual"
+        }
+      },
+      "input": [
+        { "lane": "questions", "from": "prompt_1" }
+      ]
+    },
+    {
+      "id": "target_1",
+      "provider": "response_answers",
+      "name": "Result",
+      "config": {
+        "laneName": "answers"
+      },
+      "input": [
+        { "lane": "answers", "from": "agent_1" }
+      ]
+    }
+  ]
+}
