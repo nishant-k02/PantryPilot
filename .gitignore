@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI agent tooling metadata
+/.claude
+/AGENTS.md
+/CLAUDE.md
